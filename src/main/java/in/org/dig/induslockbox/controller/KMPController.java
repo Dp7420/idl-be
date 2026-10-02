@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import in.org.dig.platform.LoggerUtil.util.EventLogDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import in.org.dig.induslockbox.aspect.ProfileExecution;
 import in.org.dig.induslockbox.dto.KMPDTO;
 import in.org.dig.induslockbox.entity.Company;
 import in.org.dig.induslockbox.entity.KMP;
@@ -35,32 +37,40 @@ public class KMPController {
 	@Autowired
 	private CompanyService companyService;
 
+	@ProfileExecution
+	@EventLogDetails(eventId = "fetchallkmp", eventName = "fetch_all_kmp", eventDescription = "fetch all KMP records", serviceName = "DIGI_LOCKER")
 	@GetMapping("/fetchall")
 	public List<KMP> getAllKMPs() {
 		return KMPService.findAll();
 	}
 
+	@ProfileExecution
+	@EventLogDetails(eventId = "fetchkmpbyid", eventName = "fetch_kmp_by_id", eventDescription = "fetch KMP by id", serviceName = "DIGI_LOCKER")
 	@GetMapping("/fetchbyid/{id}")
 	public ResponseEntity<KMP> getKMPById(@PathVariable Long id) {
 		KMP kmp = KMPService.findById(id);
 		return ResponseEntity.ok(kmp);
 	}
 
+	@ProfileExecution
+	@EventLogDetails(eventId = "fetchkmpbycompany", eventName = "fetch_kmp_by_company", eventDescription = "fetch KMP records by company id", serviceName = "DIGI_LOCKER")
 	@GetMapping("/company/{company_id}")
 	public ResponseEntity<List<KMP>> getKMPByCompanyId(@PathVariable Long company_id) {
 		List<KMP> KMPDetails = KMPService.findByCompany_id(company_id);
 		return ResponseEntity.ok(KMPDetails);
 	}
 
+	@ProfileExecution
+	@EventLogDetails(eventId = "savekmp", eventName = "save_kmp", eventDescription = "create new KMP record", serviceName = "DIGI_LOCKER")
 	@PostMapping("/save")
 	public ResponseEntity<?> createKMP(@RequestParam("name") String name, @RequestParam("email") String email,
-			@RequestParam("aadharNo") Long aadharNo, @RequestParam("passportNo") String passportNo,
-			@RequestParam("panNo") String panNo, @RequestParam("designation") String designation,
-			@RequestParam("address") String address, @RequestParam("state") String state,
-			@RequestParam("mobileNo") String mobileNo, @RequestParam("companyid") Long companyid,
-			@RequestParam("image") MultipartFile image, @RequestParam("resume") MultipartFile resume,
-			@RequestParam(value="createdBy",required = false) String createdBy, @RequestParam(value="updatedBy", required = false) String updatedBy,
-			@RequestParam("active") Boolean active) throws IOException {
+	                                   @RequestParam("aadharNo") Long aadharNo, @RequestParam("passportNo") String passportNo,
+	                                   @RequestParam("panNo") String panNo, @RequestParam("designation") String designation,
+	                                   @RequestParam("address") String address, @RequestParam("state") String state,
+	                                   @RequestParam("mobileNo") String mobileNo, @RequestParam("companyid") Long companyid,
+	                                   @RequestParam("image") MultipartFile image, @RequestParam("resume") MultipartFile resume,
+	                                   @RequestParam(value="createdBy",required = false) String createdBy, @RequestParam(value="updatedBy", required = false) String updatedBy,
+	                                   @RequestParam("active") Boolean active) throws IOException {
 
 		Company company = companyService.findById(companyid);
 		if (company == null) {
@@ -92,23 +102,25 @@ public class KMPController {
 		}
 	}
 
+	@ProfileExecution
+	@EventLogDetails(eventId = "updatekmp", eventName = "update_kmp", eventDescription = "update KMP details", serviceName = "DIGI_LOCKER")
 	@PutMapping("/update/{id}")
 	public ResponseEntity<?> updateKMP(@PathVariable Long id,
-			@RequestParam(value = "name", required = false) String name,
-			@RequestParam(value = "email", required = false) String email,
-			@RequestParam(value = "aadharNo", required = false) Long aadharNo,
-			@RequestParam(value = "passportNo", required = false) String passportNo,
-			@RequestParam(value = "panNo", required = false) String panNo,
-			@RequestParam(value = "designation", required = false) String designation,
-			@RequestParam(value = "address", required = false) String address,
-			@RequestParam(value = "state", required = false) String state,
-			@RequestParam(value = "mobileNo", required = false) String mobileNo,
-			@RequestParam(value = "active", required = false) Boolean active,
-			@RequestParam(value = "image", required = false) MultipartFile image,
-			@RequestParam(value = "resume", required = false) MultipartFile resume,
-			@RequestParam(value = "companyid", required = false) Long companyid,
-			@RequestParam(value = "createdBy", required = false) String createdBy,
-			@RequestParam(value = "updatedBy", required = false) String updatedBy) throws IOException {
+	                                   @RequestParam(value = "name", required = false) String name,
+	                                   @RequestParam(value = "email", required = false) String email,
+	                                   @RequestParam(value = "aadharNo", required = false) Long aadharNo,
+	                                   @RequestParam(value = "passportNo", required = false) String passportNo,
+	                                   @RequestParam(value = "panNo", required = false) String panNo,
+	                                   @RequestParam(value = "designation", required = false) String designation,
+	                                   @RequestParam(value = "address", required = false) String address,
+	                                   @RequestParam(value = "state", required = false) String state,
+	                                   @RequestParam(value = "mobileNo", required = false) String mobileNo,
+	                                   @RequestParam(value = "active", required = false) Boolean active,
+	                                   @RequestParam(value = "image", required = false) MultipartFile image,
+	                                   @RequestParam(value = "resume", required = false) MultipartFile resume,
+	                                   @RequestParam(value = "companyid", required = false) Long companyid,
+	                                   @RequestParam(value = "createdBy", required = false) String createdBy,
+	                                   @RequestParam(value = "updatedBy", required = false) String updatedBy) throws IOException {
 
 		KMPDTO kmpDto = new KMPDTO();
 		kmpDto.setName(name);
@@ -134,12 +146,16 @@ public class KMPController {
 		return ResponseEntity.ok(updatedKMP);
 	}
 
+	@ProfileExecution
+	@EventLogDetails(eventId = "deletekmp", eventName = "delete_kmp", eventDescription = "delete KMP record", serviceName = "DIGI_LOCKER")
 	@DeleteMapping("/delete/{id}")
 	public ResponseEntity<Void> deleteKMP(@PathVariable Long id) {
 		KMPService.deleteById(id);
 		return ResponseEntity.ok().build();
 	}
 
+	@ProfileExecution
+	@EventLogDetails(eventId = "activatekmp", eventName = "activate_kmp", eventDescription = "activate KMP record", serviceName = "DIGI_LOCKER")
 	@PatchMapping("/activate/{id}")
 	public void activateKMP(@PathVariable Long id) {
 		KMPService.activateById(id);

@@ -1,18 +1,21 @@
 package in.org.dig.induslockbox.controller;
 
-import java.util.Arrays;
-import java.util.List;
-
-import org.springframework.web.bind.annotation.CrossOrigin;
+import in.org.dig.induslockbox.aspect.ProfileExecution;
+import in.org.dig.platform.LoggerUtil.util.EventLogDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Arrays;
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/admin")
 public class StateController {
-	
-	@GetMapping("/states")
+
+    @ProfileExecution
+    @EventLogDetails(eventId = "fetchstates", eventName = "fetch_states", eventDescription = "fetch list of states with GST codes", serviceName = "DIGI_LOCKER")
+    @GetMapping("/states")
     public List<State> getStates() {
         return Arrays.asList(
                 new State("Jammu & Kashmir", "01"),
